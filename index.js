@@ -14,28 +14,6 @@ const db = new sqlite3.Database(`./${process.env.DB_NAME}`);
 // Log the database name to make sure process.env can access correctly
 console.log(`Database name is ${process.env.DB_NAME}`);
 
-// // Create a table called "items", columns
-// let create_users_table = `CREATE TABLE IF NOT EXISTS 
-//                             users (
-//                                 id integer PRIMARY KEY,
-//                                 email text NOT NULL
-//                                 --, token text
-//                             ); `
-
-// let create_items_table = `CREATE TABLE IF NOT EXISTS 
-//                             notes (
-//                                 id integer PRIMARY KEY,
-//                                 note text,
-//                                 userid integer,
-//                                 FOREIGN KEY(userid) REFERENCES users(id)
-//                             ); `   
-
-// db.run(create_items_table);
-// db.run(create_users_table);
-
-// // close the database connection - turned off to be able to use the same references later
-// db.close();
-
 // //Use Sequelize for setting data models, database creation, and querying
 // import { Sequelize, DataTypes } from 'sequelize';
 const Sequelize = require('sequelize');
@@ -84,9 +62,6 @@ const Note = sequelize.define('note', {
 User.hasMany(Note)
 
 sequelize.sync()
-
-// changes.create({type:"test"})
-// Sequelize.Model.cre
 
 // //Testing these procedures to run when hooked
 // Sequelize.Model.beforeCreate(Notes,function(){console.log("Note created")})
@@ -141,10 +116,8 @@ const transporter = nm.createTransport({
 const auth = require('./auth-functions.js');
 const session_cookie_max_age = 15; //in minutes
 
-
 //2023-07-29: Trying pug for templating
 app.set('view engine', 'pug');
-
 
 //Endpoints
 const path = require('path');
@@ -242,17 +215,6 @@ app.get("/auth", (req, res, next) => {
 
             // This will require storing live sessions in a database.
             // If they are logged-in, show live sessions (should only allow 1 at a time).
-
-            // // Store user email on authentication, only if not stored already                
-            // let sql = (email) => 
-            //                     `
-            //                         INSERT INTO users(email)
-            //                         SELECT '${email}'
-            //                         WHERE NOT EXISTS (SELECT * FROM users WHERE email = '${email}')
-            //                     `;
-
-            // db.run(sql(authorization["full-token"]["email"]));
-
 
             // Sequalize version of user check and/or creation (depends on "unique" property of email in user records)
             User.create({ email: authorization["full-token"]["email"] })
@@ -378,6 +340,7 @@ app.get("/items", (req, res, next) => {
 
     res.json({ "message": "This will return all database records, not yet configured." })
 });
+
 // Post: add an item to the database
 app.post("/api/item", async (req, res, next) => {
 
@@ -404,17 +367,6 @@ app.post("/api/item", async (req, res, next) => {
                 httpOnly: true // The cookie only accessible by the web server
             }
             res.cookie('session', URL_encoded_encrypted_token, options) // options is optional
-
-            // //Add new item to database, assigned to this user
-            // let sql = (note, email) => 
-            //                     `
-            //                         INSERT INTO notes(note, userid)
-            //                         SELECT '${note}', (select id from users where email='${email}')
-            //                     `;
-            // let note = req.body['text'];
-            // let user_notes = db.run(sql(note, authorization["full-token"]["email"]));
-            // console.log("Database write: " + JSON.stringify(user_notes));
-            // // db.close();
 
             //Add new item to database, assigned to this user
             const getUserByEmail = user_email => {
