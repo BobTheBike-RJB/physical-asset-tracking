@@ -131,6 +131,12 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 app.get("/home", (req, res, next) => {
     res.sendFile(path.join(__dirname, 'public', 'Home.html'));
 });
+
+
+app.get("/main.js", (req, res, next) => {
+    res.sendFile(path.join(__dirname, 'public', 'main.js'));
+});
+
 // Other commonly-used endpoints to redirect to /home
 app.get(["/", "/index"], (req, res, next) => {
     res.redirect("/home");
@@ -409,6 +415,13 @@ app.post("/api/item", async (req, res, next) => {
     }
     //Ends the "authorization" workflow
 
+});
+
+// TODO: Mark a 'status' column in the notes table of the db as "deleted"
+// Delete: Mark database item as "deleted"
+app.delete("/api/item", async (req, res, next) => {
+    console.log("User tried to delete an item");
+    res.json({ "message": "This will mark the item/note as deleted, not yet configured." })
 });
 
 app.use("/api", (req, res, next) => {

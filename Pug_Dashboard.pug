@@ -29,6 +29,6 @@ html(lang="en")
                 ul
                 each item in items
                     li= item.note
-                    a(class='button delete-todo' href='/api/item' + item.id) Delete
+                    Button(class='button delete-todo' href='/api/item/' + item.id) Delete
                 else
                     li There are no notes.
