@@ -166,6 +166,7 @@ app.get("/dashboard", (req, res, next) => {
             }
             res.cookie('session', URL_encoded_encrypted_token, options) // options is optional
 
+            // TODO: Change over to use Sequelize
             //Get data already stored for this user
             let sql = (email) => `select * FROM notes where userid = (select id from users where email='${email}')`;
             db.all(sql(authorization["full-token"]["email"]), (error, rows) => {
