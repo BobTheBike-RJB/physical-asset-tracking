@@ -50,6 +50,7 @@ const User = sequelize.define('user', {
     });
 const Note = sequelize.define('note', {
     note: Sequelize.STRING,
+    deleted: Sequelize.DATE,
     userId: {
         type: Sequelize.INTEGER,
         references: {

@@ -19,3 +19,8 @@ A website template for simple physical asset tracking using QR codes.
 - Server-rendered frontend in vanilla HTML, CSS, Javascript
 
 - Self-hosted server + database
+
+## To Use
+Clone the project and run:
+1. `npm install`
+2. `npm start`
