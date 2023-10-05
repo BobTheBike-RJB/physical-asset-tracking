@@ -23,3 +23,19 @@ $(document).ready(function(){
       });
     });
   });
+
+
+function sendDelete(path, id){
+  fetch('/api/' + path + '/' + id, {
+    method: 'DELETE'
+  })
+}
+
+function openEditForm(){
+}
+function sendPut(path, id, object){
+  fetch('/api/' + path + '/' + id, {
+    method: 'PUT',
+    
+  })
+}

@@ -26,13 +26,13 @@ html(lang="en")
                 button.btn.btn-primary(type='submit') Add to List
             #item-container.container.mt-3
             h2 My Items
-                //- -var items= items
-                ul
-                each item in items
-                    li= item.note
-                        Button(class='btn btn-default' href='/api/item/' + item.id) Edit 
-                            i(class="bi bi-pencil")
-                        Button(class='btn btn-danger' href='/api/item/' + item.id) Delete 
-                            i(class="bi bi-trash3")
-                else
-                    li There are no notes.
+            //- -var items= items
+            ul
+            each item in items
+                li= item.note
+                    Button(class='btn btn-default' onClick='sendDelete(\"item\",item.id)' ) Edit 
+                        i(class="bi bi-pencil")
+                    Button(class='btn btn-danger' onClick='sendDelete(\"item\",item.id)' ) Delete 
+                        i(class="bi bi-trash3")
+            else
+                li There are no notes.
