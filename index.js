@@ -421,7 +421,7 @@ app.post("/api/item", async (req, res, next) => {
 // TODO: Mark a 'status' column in the notes table of the db as "deleted"
 // Delete: Mark database item as "deleted"
 app.delete("/api/item/:id", (req, res, next) => {
-    console.log("User tried to delete an item");
+    console.log("User tried to delete item:"+ req.params.id);
     res.json({ "message": "This will mark the item/note as deleted, not yet configured." })
 });
 
