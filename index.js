@@ -222,16 +222,16 @@ app.get("/auth", (req, res, next) => {
             console.log(authorization);
 
             //Process for storing user, registering visit & token, and passing tokens for authentication during the session
-            // - This should invalidate the token sent via email; and future requests passing the same token should display a message explaining why: 
+            // TODO: This should invalidate the token sent via email; and future requests passing the same token should display a message explaining why: 
             // they used a link that was already used to log-in via email.
             // If logged-in on this agent, then no worries.
             // If not logged-in, then send back to the login page.
             // - Do not reveal email address, only check token 
 
-            // This will require storing live sessions in a database.
+            // TODO: This will require storing live sessions in a database.
             // If they are logged-in, show live sessions (should only allow 1 at a time).
 
-            // Sequalize version of user check and/or creation (depends on "unique" property of email in user records)
+            // Sequelize version of user check and/or creation (depends on "unique" property of email in user records)
             User.create({ email: authorization["full-token"]["email"] })
                 .then(function (User) {
                     console.log({
@@ -425,14 +425,13 @@ app.post("/api/item", async (req, res, next) => {
 
 });
 
-// TODO: Mark a 'status' column in the notes table of the db as "deleted"
 // Delete: Mark database item as "deleted"
 app.delete("/api/item/:id", (req, res, next) => {
     
     Note.update({deleted: Date()},{where:{ id: req.params.id }})
         .then( console.log("Marked item as deleted") )
-    
-    res.json({ "message": "This will mark the item/note as deleted, work-in-progress." })
+        // TODO: Error handling
+        .then ( res.json({ "message": "This will mark the item/note as deleted, work-in-progress." }) )
 });
 
 app.use("/api", (req, res, next) => {
