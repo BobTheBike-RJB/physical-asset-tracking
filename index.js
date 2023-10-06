@@ -186,19 +186,6 @@ app.get("/dashboard", async (req, res, next) => {
             }
             res.cookie('session', URL_encoded_encrypted_token, options) // options is optional
 
-            // TODO: Change over to use Sequelize
-            // //Get data already stored for this user
-            // let sql = (email) => `select * FROM notes where userid = (select id from users where email='${email}')`;
-            // db.all(sql(authorization["full-token"]["email"]), (error, rows) => {
-            //     console.log(rows);
-            //     user_notes = { ...rows }
-
-            //     //take to page
-            //     // res.sendFile(path.join(__dirname,'/Dashboard.html'));
-            //     res.render(path.join(__dirname, 'Pug_Dashboard.pug'), { pageTitle: 'Dashboard', appName: 'Web App Template', items: user_notes })
-            // });
- 
-            // Seuelize method of doing above SQL
             //Get data already stored for this user
             let user = await getUserByEmail(authorization["full-token"]["email"]);
             let user_notes = await Note.findAll({where:{userId:user.id, deleted:null}})
