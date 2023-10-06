@@ -59,20 +59,32 @@ const Note = sequelize.define('note', {
         }
     }
 });
+exports.Note = Note;
 
 User.hasMany(Note)
 
 sequelize.sync()
 
-// //Testing these procedures to run when hooked
-// Sequelize.Model.beforeCreate(Notes,function(){console.log("Note created")})
+/**
+* Retrieves a user based on email
+*/
+function getUserByEmail(user_email) {
+    return User.findOne({
+        where: { email: user_email }
+    }).then(response => {
+        console.log(response.dataValues);//the object with the data I need
+        return response.dataValues;
+    });
+};
 
 
-// //Use Passport JS for authentication and authorization, magic-link strategy
+// TODO: Use Passport JS for authentication and authorization, magic-link strategy
+
 
 //Express app setup
 const express = require('express');
 const app = express();
+exports.app = app;
 const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const favicon = require('serve-favicon');
@@ -116,6 +128,7 @@ const transporter = nm.createTransport({
 // Authentication and authorization functions
 const auth = require('./auth-functions.js');
 const session_cookie_max_age = 15; //in minutes
+exports.session_cookie_max_age = session_cookie_max_age;
 
 //2023-07-29: Trying pug for templating
 app.set('view engine', 'pug');
@@ -147,7 +160,7 @@ app.get("/login", (req, res, next) => {
     res.sendFile(path.join(__dirname, 'public', 'Login.html'));
 });
 //Get: Dashboard page
-app.get("/dashboard", (req, res, next) => {
+app.get("/dashboard", async (req, res, next) => {
 
     //Starts the "authorization" workflow
     secure_page = true;
@@ -174,16 +187,23 @@ app.get("/dashboard", (req, res, next) => {
             res.cookie('session', URL_encoded_encrypted_token, options) // options is optional
 
             // TODO: Change over to use Sequelize
-            //Get data already stored for this user
-            let sql = (email) => `select * FROM notes where userid = (select id from users where email='${email}')`;
-            db.all(sql(authorization["full-token"]["email"]), (error, rows) => {
-                console.log(rows);
-                user_notes = { ...rows }
+            // //Get data already stored for this user
+            // let sql = (email) => `select * FROM notes where userid = (select id from users where email='${email}')`;
+            // db.all(sql(authorization["full-token"]["email"]), (error, rows) => {
+            //     console.log(rows);
+            //     user_notes = { ...rows }
 
-                //take to page
-                // res.sendFile(path.join(__dirname,'/Dashboard.html'));
-                res.render(path.join(__dirname, 'Pug_Dashboard.pug'), { pageTitle: 'Dashboard', appName: 'Web App Template', items: user_notes })
-            });
+            //     //take to page
+            //     // res.sendFile(path.join(__dirname,'/Dashboard.html'));
+            //     res.render(path.join(__dirname, 'Pug_Dashboard.pug'), { pageTitle: 'Dashboard', appName: 'Web App Template', items: user_notes })
+            // });
+ 
+            // Seuelize method of doing above SQL
+            //Get data already stored for this user
+            let user = await getUserByEmail(authorization["full-token"]["email"]);
+            let user_notes = await Note.findAll({where:{userId:user.id, deleted:null}})
+            res.render(path.join(__dirname, 'Pug_Dashboard.pug'), { pageTitle: 'Dashboard', appName: 'Web App Template', items: user_notes })
+
         }
         else {
             console.log(authorization["server-message"]);
@@ -421,8 +441,11 @@ app.post("/api/item", async (req, res, next) => {
 // TODO: Mark a 'status' column in the notes table of the db as "deleted"
 // Delete: Mark database item as "deleted"
 app.delete("/api/item/:id", (req, res, next) => {
-    console.log("User tried to delete item:"+ req.params.id);
-    res.json({ "message": "This will mark the item/note as deleted, not yet configured." })
+    
+    Note.update({deleted: Date()},{where:{ id: req.params.id }})
+        .then( console.log("Marked item as deleted") )
+    
+    res.json({ "message": "This will mark the item/note as deleted, work-in-progress." })
 });
 
 app.use("/api", (req, res, next) => {
