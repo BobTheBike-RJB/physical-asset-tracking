@@ -146,7 +146,6 @@ app.get("/home", (req, res, next) => {
     res.sendFile(path.join(__dirname, 'public', 'Home.html'));
 });
 
-
 app.get("/main.js", (req, res, next) => {
     res.sendFile(path.join(__dirname, 'public', 'main.js'));
 });
@@ -428,7 +427,18 @@ app.post("/api/item", async (req, res, next) => {
 // Delete: Mark database item as "deleted"
 app.delete("/api/item/:id", (req, res, next) => {
     
+    // TODO: Add authentication (maybe implement as part of Passport.js?)
     Note.update({deleted: Date()},{where:{ id: req.params.id }})
+        .then( console.log("Marked item as deleted") )
+        // TODO: Error handling
+        .then ( res.json({ "message": "This will mark the item/note as deleted, work-in-progress." }) )
+});
+
+// Update: Update database item
+app.put("/api/item/:id", (req, res, next) => {
+    
+    // TODO: Add authentication (maybe implement as part of Passport.js?)
+    Note.update({note: Date()},{where:{ id: req.params.id }})
         .then( console.log("Marked item as deleted") )
         // TODO: Error handling
         .then ( res.json({ "message": "This will mark the item/note as deleted, work-in-progress." }) )
