@@ -1,41 +1,38 @@
 // main.js
 
-// //Taken from "https://stackoverflow.com/questions/60521350/handling-delete-operation-in-express-pug-template-engine" on 2023-10-02
-// // SOURCE: https://github.com/elvc/node_express_pug_mongo/blob/master/public/js/main.js
-// $(document).ready(function(){
-//     $('.button.delete-todo').on('click', function(e){
-//       e.preventDefault();
-//       $target = $(e.target);
-//       const id = $target.attr('data-articleid');
-  
-//       $.ajax({
-//         type: 'DELETE',
-//         url: '/todos/'+id,
-//         success: function (response){
-//           // Whatever you want to do after successful delete
-//           console.log(response);
-//           alert('Deleting article');
-//         },
-//         error: function(err){
-//           // Whatever you want to do after a failed delete
-//           console.error(err);
-//         }
-//       });
-//     });
-//   });
-
-
 function sendDelete(path, id){
   fetch('/api/' + path + '/' + id, {
     method: 'DELETE'
   })
 }
 
-function openEditForm(){
-}
-function sendPut(path, id, object){
+function sendPut(path, id, data){
   fetch('/api/' + path + '/' + id, {
-    method: 'PUT',
-    
+    method: "PUT", // *GET, POST, PUT, DELETE, etc.
+    mode: "cors", // no-cors, *cors, same-origin
+    cache: "no-cache", // *default, no-cache, reload, force-cache, only-if-cached
+    credentials: "same-origin", // include, *same-origin, omit
+    headers: {
+      // "Content-Type": "application/json",
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    // redirect: "follow", // manual, *follow, error
+    // referrerPolicy: "no-referrer", // no-referrer, *no-referrer-when-downgrade, origin, origin-when-cross-origin, same-origin, strict-origin, strict-origin-when-cross-origin, unsafe-url
+    body: JSON.stringify(data)
   })
+}
+
+function insertAfter(referenceNode, newNode) {
+  referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
+function openEditForm(){
+  let trigger_element = event.element
+  console.log("openEditForm run");
+
+  var el = document.createElement("input");
+  el.innerHTML = trigger_element.previousSibling.innerHTML;
+  
+  
+  insertAfter(trigger_element, el);
 }
