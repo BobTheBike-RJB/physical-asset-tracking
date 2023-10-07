@@ -2,7 +2,8 @@
 
 function sendDelete(path, id){
   fetch('/api/' + path + '/' + id, {
-    method: 'DELETE'
+    method: 'DELETE',
+    redirect: "follow"
   })
 }
 
@@ -27,12 +28,12 @@ function insertAfter(referenceNode, newNode) {
 }
 
 function openEditForm(){
-  let trigger_element = event.element
+  let trigger_element = event.target
   console.log("openEditForm run");
 
   var el = document.createElement("input");
-  el.innerHTML = trigger_element.previousSibling.innerHTML;
-  
-  
+  el.placeholder = trigger_element.previousSibling.value;
+  console.log(trigger_element.previousSibling.value)  
+
   insertAfter(trigger_element, el);
 }

@@ -30,9 +30,9 @@ html(lang="en")
             ul
             each item in items
                 li= item.note
-                    Button(class='btn btn-secondary' onClick=`openEditForm()` ) Edit 
+                    Button(class='btn btn-secondary' onClick=`openEditForm()` disabled) Edit 
                         i(class="bi bi-pencil")
-                    Button(class='btn btn-danger' onClick=`sendDelete('item',${item.id})` ) Delete 
+                    Button(class='btn btn-danger active' onClick=`sendDelete('item',${item.id})` ) Delete 
                         i(class="bi bi-trash3")
             else
                 li There are no notes.

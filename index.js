@@ -427,11 +427,16 @@ app.post("/api/item", async (req, res, next) => {
 // Delete: Mark database item as "deleted"
 app.delete("/api/item/:id", (req, res, next) => {
     
+    let call_ref = new URL(req.get('referer'))
+    
     // TODO: Add authentication (maybe implement as part of Passport.js?)
     Note.update({deleted: Date()},{where:{ id: req.params.id }})
         .then( console.log("Marked item as deleted") )
         // TODO: Error handling
-        .then ( res.json({ "message": "This will mark the item/note as deleted, work-in-progress." }) )
+        .then ( 
+            res.redirect(call_ref.pathname)
+            // res.json({ "message": "This will mark the item/note as deleted, work-in-progress." })
+             )
 });
 
 // Update: Update database item
