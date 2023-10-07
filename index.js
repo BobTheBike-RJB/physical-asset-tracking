@@ -438,10 +438,10 @@ app.delete("/api/item/:id", (req, res, next) => {
 app.put("/api/item/:id", (req, res, next) => {
     
     // TODO: Add authentication (maybe implement as part of Passport.js?)
-    Note.update({note: Date()},{where:{ id: req.params.id }})
-        .then( console.log("Marked item as deleted") )
+    Note.update({note: req.body['text']},{where:{ id: req.params.id }})
+        .then( console.log("Updated item") )
         // TODO: Error handling
-        .then ( res.json({ "message": "This will mark the item/note as deleted, work-in-progress." }) )
+        .then ( res.json({ "message": "Item has been updated." }) )
 });
 
 app.use("/api", (req, res, next) => {
