@@ -5,7 +5,7 @@ A website template for simple physical asset tracking using QR codes.
 - Homepage
 - Login/Authentication
 - Private data store
-- Unique ID & QR code generation
+- Unique ID & QR code generation (2023-10-07, in progress)
 - Basic analytics on QR/URI visits
 ### Planned future features
 - Detailed device GPS location
