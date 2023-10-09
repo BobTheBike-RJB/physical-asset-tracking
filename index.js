@@ -59,9 +59,22 @@ const Note = sequelize.define('note', {
         }
     }
 });
-exports.Note = Note;
 
 User.hasMany(Note)
+
+const Codes = sequelize.define('code', {
+    code: Sequelize.STRING,
+    deleted: Sequelize.DATE,
+    userId: {
+        type: Sequelize.INTEGER,
+        references: {
+            model: 'users', // 'users' refers to table name
+            key: 'id', // 'id' refers to column name in users table
+        }
+    }
+});
+
+User.hasMany(Codes)
 
 sequelize.sync()
 
