@@ -94,6 +94,7 @@ function getUserByEmail(user_email) {
 // TODO: Use Passport JS for authentication and authorization, magic-link strategy
 
 
+
 //Express app setup
 const express = require('express');
 const app = express();

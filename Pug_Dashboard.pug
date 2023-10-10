@@ -16,16 +16,8 @@ html(lang="en")
             br
             a(href="/home") Go to Home 
             br
-        #add-item-form-container.container.mt-3
-            h3 Add Item
-            form(action='/api/item' method='POST')
-                .mb-3.mt-3
-                label(for='text') Item:
-                input#item.form-control(type='text' placeholder='add an item' name='text' required='')
-                br
-                button.btn.btn-primary(type='submit') Add to List
-            #item-container.container.mt-3
-            h2 My QR Codes
+        #item-container.container.mt-3
+            h2 My Physical Assets
             //- -var items= items
             ul
             each item in items
@@ -35,5 +27,5 @@ html(lang="en")
                     Button(class='btn btn-danger active' onClick=`sendDelete('item',${item.id})` ) Delete 
                         i(class="bi bi-trash3")
             else
-                li There are no QR codes. 
-                Button(class='btn btn-primary active' onClick=`` ) Create your first QR code here!
+                li You do not have any assets entered. 
+                Button(class='btn btn-primary active' onClick=`` ) Create your first asset & QR code here!
