@@ -1,4 +1,4 @@
-// Starting point for Node.js Template App
+// Entry point for App
 
 //Connect to Environment.env file (named "Environment.env"), accessed in JS through process.env
 require('dotenv').config({ path: "./Environment.env" });
