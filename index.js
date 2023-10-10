@@ -32,10 +32,6 @@ sequelize.authenticate()
         console.error('Unable to connect to the database:', err);
     });
 
-// const sequelize = new Sequelize('sqlite::memory:');
-const Change = sequelize.define('changelog', {
-    type: Sequelize.STRING
-});
 const User = sequelize.define('user', {
     email: Sequelize.STRING
 },
