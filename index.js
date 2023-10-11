@@ -3,13 +3,9 @@
 //Connect to Environment.env file (named "Environment.env"), accessed in JS through process.env
 require('dotenv').config({ path: "./Environment.env" });
 
-// Create database and these tables, if they do not already exist
-
 // Database creation/connection
 // Create and/or connect to existing database
 const sqlite3 = require('sqlite3').verbose();
-// Open the database
-const db = new sqlite3.Database(`./${process.env.DB_NAME}`);
 
 // Log the database name to make sure process.env can access correctly
 console.log(`Database name is ${process.env.DB_NAME}`);
@@ -17,6 +13,7 @@ console.log(`Database name is ${process.env.DB_NAME}`);
 // //Use Sequelize for setting data models, database creation, and querying
 // import { Sequelize, DataTypes } from 'sequelize';
 const Sequelize = require('sequelize');
+// Open the database, create connection
 const sequelize = new Sequelize({
     // The `host` parameter is required for all databases other than SQLite
     host: 'localhost',
@@ -86,11 +83,6 @@ function getUserByEmail(user_email) {
     });
 };
 
-
-// TODO: Use Passport JS for authentication and authorization, magic-link strategy
-
-
-
 //Express app setup
 const express = require('express');
 const app = express();
@@ -109,32 +101,15 @@ app.listen(port, () => {
     console.log(`App is listening on port ${port}`);
 });
 
-//Emailing functions
-const nm = require('nodemailer');
-
-// // Settings for Ethereal.Email
-// const transporter = nm.createTransport({
-//     auth:{
-//         pass: process.env.TEST_EMAIL_PASS,
-//         user: process.env.TEST_EMAIL_USER
-//     },
-//     secure: false,
-//     host: 'smtp.ethereal.email',
-//     port: 587
-// });
-
-// Settings for Zoho Mail
-const transporter = nm.createTransport({
-    auth: {
-        pass: process.env.EMAIL_PASS,
-        user: process.env.EMAIL_USER
-    },
-    secure: true,
-    host: 'smtppro.zoho.com',
-    port: 465 || 587
-});
 
 // My Modules
+// Emailing functions
+const email = require('./email-functions.js');
+
+
+// TODO: Use Passport JS for authentication and authorization, magic-link strategy
+
+
 // Authentication and authorization functions
 const auth = require('./auth-functions.js');
 const session_cookie_max_age = 15; //in minutes
@@ -338,7 +313,7 @@ app.post("/login", (req, res, next) => {
             to: params['email']
         };
 
-        transporter.sendMail(mail_options, (error, info) => {
+        email.sendMail(mail_options, (error, info) => {
             if (error) {
                 console.log("Cannot send email")
                 console.log(error)
@@ -351,6 +326,7 @@ app.post("/login", (req, res, next) => {
                 res.sendFile(path.join(__dirname, 'public', 'Success.html'));
             }
         });
+
     }
     else {
         res.json({ message: "Uh oh, no login method was specified." })
