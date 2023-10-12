@@ -1,11 +1,12 @@
 // Entry point for App
 
+
+
 //Connect to Environment.env file (named "Environment.env"), accessed in JS through process.env
 require('dotenv').config({ path: "./Environment.env" });
 
 // Database creation/connection
 // Create and/or connect to existing database
-const sqlite3 = require('sqlite3').verbose();
 
 // Log the database name to make sure process.env can access correctly
 console.log(`Database name is ${process.env.DB_NAME}`);
@@ -71,6 +72,9 @@ User.hasMany(Codes)
 
 sequelize.sync()
 
+// TODO: Modularize the database setup and models
+// const db = require('./db.js');
+
 /**
 * Retrieves a user based on email
 */
@@ -120,31 +124,30 @@ app.set('view engine', 'pug');
 
 //Endpoints
 const path = require('path');
-const { SequelizeMethod } = require('sequelize');
 
 //Favicon
 app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));
 
 // Web page endpoints
 // Root endpoint, Home page
-app.get("/home", (req, res, next) => {
+app.get("/home", (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'Home.html'));
 });
 
-app.get("/main.js", (req, res, next) => {
+app.get("/main.js", (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'main.js'));
 });
 
 // Other commonly-used endpoints to redirect to /home
-app.get(["/", "/index"], (req, res, next) => {
+app.get(["/", "/index"], (req, res) => {
     res.redirect("/home");
 });
 //Get: Login page
-app.get("/login", (req, res, next) => {
+app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'Login.html'));
 });
 //Get: Dashboard page
-app.get("/dashboard", async (req, res, next) => {
+app.get("/dashboard", async (req, res) => {
 
     //Starts the "authorization" workflow
     secure_page = true;
@@ -189,7 +192,7 @@ app.get("/dashboard", async (req, res, next) => {
     //Ends the "authorization" workflow
 });
 //Get: Authentication process launch page for emailed magic links
-app.get("/auth", (req, res, next) => {
+app.get("/auth", async (req, res) => {
 
     //Starts the "authentication" workflow
     if (req.query.token) {
@@ -266,7 +269,7 @@ app.get("/auth", (req, res, next) => {
 // API and service endpoints
 //Post: Login authentication
 // TODO: Replace this with a Passport JS strategy
-app.post("/login", (req, res, next) => {
+app.post("/login", (req, res) => {
 
     var params = req.body;
     console.log("Login process started");
@@ -334,7 +337,7 @@ app.post("/login", (req, res, next) => {
 });
 
 //Get: all items
-app.get("/items", (req, res, next) => {
+app.get("/items", (req, res) => {
 
     // //Logic to pull all items from the database
 
@@ -342,7 +345,7 @@ app.get("/items", (req, res, next) => {
 });
 
 // Post: add an item to the database
-app.post("/api/item", async (req, res, next) => {
+app.post("/api/item", async (req, res) => {
 
     //Starts the "authorization" workflow
     secure_page = true;
@@ -368,30 +371,18 @@ app.post("/api/item", async (req, res, next) => {
             }
             res.cookie('session', URL_encoded_encrypted_token, options) // options is optional
 
-            //Add new item to database, assigned to this user
-            const getUserByEmail = user_email => {
-                return User.findOne({
-                    where: { email: user_email }
-                }).then(response => {
-                    console.log(response.dataValues);//the object with the data I need
-                    return response.dataValues;
-                });
-            };
+            // //Add new item to database, assigned to this user
+            // const getUserByEmail = user_email => {
+            //     return User.findOne({
+            //         where: { email: user_email }
+            //     }).then(response => {
+            //         console.log(response.dataValues);//the object with the data I need
+            //         return response.dataValues;
+            //     });
+            // };
 
             user = await getUserByEmail(authorization["full-token"]["email"])
 
-            let newNote = Note.create({ note: req.body['text'], userId: user["id"] })
-                .then(function (SequelizeResponse) {
-                    console.log(SequelizeResponse)
-                })
-                .catch(function (err) {
-                    if (err.name == 'SequelizeUniqueConstraintError') {
-                        console.log("Unique record already exists")
-                    }
-                    else {
-                        console.log(err)
-                    }
-                });
 
             //take to page
             res.redirect('/dashboard');
@@ -411,7 +402,7 @@ app.post("/api/item", async (req, res, next) => {
 });
 
 // Delete: Mark database item as "deleted"
-app.delete("/api/item/:id", (req, res, next) => {
+app.delete("/api/item/:id", (req, res) => {
     
     let call_ref = new URL(req.get('referer'))
     
@@ -426,7 +417,7 @@ app.delete("/api/item/:id", (req, res, next) => {
 });
 
 // Update: Update database item
-app.put("/api/item/:id", (req, res, next) => {
+app.put("/api/item/:id", (req, res) => {
     
     // TODO: Add authentication (maybe implement as part of Passport.js?)
     Note.update({note: req.body['text']},{where:{ id: req.params.id }})
@@ -435,7 +426,7 @@ app.put("/api/item/:id", (req, res, next) => {
         .then ( res.json({ "message": "Item has been updated." }) )
 });
 
-app.use("/api", (req, res, next) => {
+app.use("/api", (req, res) => {
     res.json({ "message": "This will return API responses, not yet configured." })
 });
 
