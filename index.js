@@ -1,9 +1,8 @@
 // Entry point for App
 
-
-
 //Connect to Environment.env file (named "Environment.env"), accessed in JS through process.env
 require('dotenv').config({ path: "./Environment.env" });
+
 
 // Database creation/connection
 // Create and/or connect to existing database
