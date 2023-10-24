@@ -94,6 +94,11 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const favicon = require('serve-favicon');
 
+//This should enable CORS for all requests
+// TODO: change in production
+var cors = require('cors')
+app.use(cors())
+
 const port = 3000;
 
 app.use(bodyParser.json());
@@ -427,6 +432,11 @@ app.put("/api/item/:id", (req, res) => {
 
 app.use("/api", (req, res) => {
     res.json({ "message": "This will return API responses, not yet configured." })
+});
+
+//Get: Login page
+app.get("/button", (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'Click and Wait for Server Button.html'));
 });
 
 // 404: Default response for any vague requests

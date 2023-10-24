@@ -11,12 +11,54 @@
 </head>
 
 <body>
-    <h1 class="cool">Success!</h1>
-    <p>Whatever you were trying to do worked!</p>
-    <br>
-    <a href="/home" class="">Go to Home</a>
-    <br>
-    <a href="/dashboard" class="">Go to Dashboard</a>
+    <h1 class="cool">Button that Does Something</h1>
+    <button id="unique" class="btn-primary" onclick="buttonclick()">Do something</button>
 </body>
+
+<script>
+
+    function buttonclick() {
+
+        // Start loading
+        let myButton = document.getElementById("unique");
+        myButton.classList.add('disabled')
+        myButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading..'             
+
+        // Do action 
+        fetch('http://localhost:3000/api', {
+            method: 'GET',
+            redirect: "follow"
+        }).then(response => {
+            if (response.status !== 200) {
+                console.log('Looks like there was a problem. Status Code: ' +
+                response.status);
+                return;
+            }
+            setTimeout(2000)
+            //Success actions
+            myButton.innerHTML = "Review"
+            myButton.classList.remove('disabled')
+            myButton.classList.replace("btn-primary","btn-success")
+            
+
+            console.log(response.headers.get("Content-Type"));
+            return response.json();
+            }
+        )
+        .then(myJson => {
+            console.log(JSON.stringify(myJson));
+        })
+        .catch(err => {
+
+            //Error actions
+            myButton.innerHTML = "X Error"
+            myButton.classList.replace("btn-primary","btn-danger")
+
+            console.log('Fetch Error :-S', err);
+        });
+
+    }
+
+</script>
 
 </html>
