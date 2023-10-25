@@ -22,7 +22,7 @@
         // Start loading
         let myButton = document.getElementById("unique");
         myButton.classList.add('disabled')
-        myButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading..'             
+        myButton.innerHTML = '<span class="spinner-border spinner-border-sm"></span> Loading..'
 
         // Do action 
         fetch('http://localhost:3000/api', {
@@ -31,31 +31,32 @@
         }).then(response => {
             if (response.status !== 200) {
                 console.log('Looks like there was a problem. Status Code: ' +
-                response.status);
+                    response.status);
                 return;
             }
-            setTimeout(2000)
             //Success actions
-            myButton.innerHTML = "Review"
-            myButton.classList.remove('disabled')
-            myButton.classList.replace("btn-primary","btn-success")
-            
+            function successButton(btnElement = myButton) {
+                btnElement.innerHTML = "Review"
+                btnElement.classList.remove('disabled')
+                btnElement.classList.replace("btn-primary", "btn-success")
+            }
+            setTimeout(successButton, 2000)
 
             console.log(response.headers.get("Content-Type"));
             return response.json();
-            }
+        }
         )
-        .then(myJson => {
-            console.log(JSON.stringify(myJson));
-        })
-        .catch(err => {
+            .then(myJson => {
+                console.log(JSON.stringify(myJson));
+            })
+            .catch(err => {
 
-            //Error actions
-            myButton.innerHTML = "X Error"
-            myButton.classList.replace("btn-primary","btn-danger")
+                //Error actions
+                myButton.innerHTML = "X Error"
+                myButton.classList.replace("btn-primary", "btn-danger")
 
-            console.log('Fetch Error :-S', err);
-        });
+                console.log('Fetch Error :-S', err);
+            });
 
     }
 
