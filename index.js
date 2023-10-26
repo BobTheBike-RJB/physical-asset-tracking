@@ -94,10 +94,10 @@ const bodyParser = require("body-parser");
 const cookieParser = require('cookie-parser');
 const favicon = require('serve-favicon');
 
-//This should enable CORS for all requests
-// TODO: change in production
-var cors = require('cors')
-app.use(cors())
+// //This should enable CORS for all requests
+// // TODO: change in production
+// var cors = require('cors')
+// app.use(cors())
 
 const port = 3000;
 
