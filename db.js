@@ -74,6 +74,4 @@ const Codes = db.sequelize.define('code', {
 
 User.hasMany(Codes)
 
-db.sequelize.sync()
-
 module.exports = db;

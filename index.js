@@ -29,18 +29,22 @@ sequelize.authenticate()
         console.error('Unable to connect to the database:', err);
     });
 
-const User = sequelize.define('user', {
-    email: Sequelize.STRING
-},
-    {
-        indexes: [
-            // Create a unique index on email
-            {
-                unique: true,
-                fields: ['email']
-            }
-        ]
-    });
+//     //TODO: changing over to use model 'users.js' 
+// const User = sequelize.define('user', {
+//     email: Sequelize.STRING
+// },
+//     {
+//         indexes: [
+//             // Create a unique index on email
+//             {
+//                 unique: true,
+//                 fields: ['email']
+//             }
+//         ]
+//     });
+
+const User = require('./models/users');
+
 const Note = sequelize.define('note', {
     note: Sequelize.STRING,
     deleted: Sequelize.DATE,
@@ -71,8 +75,10 @@ User.hasMany(Codes)
 
 sequelize.sync()
 
-// TODO: Modularize the database setup and models
+// // TODO: Modularize the database setup and models
 // const db = require('./db.js');
+// db.sequelize.sync()
+
 
 /**
 * Retrieves a user based on email
@@ -146,10 +152,14 @@ app.get("/main.js", (req, res) => {
 app.get(["/", "/index"], (req, res) => {
     res.redirect("/home");
 });
+
 //Get: Login page
+// TODO: replacing this with Passport js strategy 2023-10-27
 app.get("/login", (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'Login.html'));
 });
+
+
 //Get: Dashboard page
 app.get("/dashboard", async (req, res) => {
 
@@ -195,7 +205,10 @@ app.get("/dashboard", async (req, res) => {
     }
     //Ends the "authorization" workflow
 });
+
+
 //Get: Authentication process launch page for emailed magic links
+// TODO: replacing this with Passport js strategy 2023-10-27
 app.get("/auth", async (req, res) => {
 
     //Starts the "authentication" workflow
@@ -271,6 +284,7 @@ app.get("/auth", async (req, res) => {
 });
 
 // API and service endpoints
+
 //Post: Login authentication
 // TODO: Replace this with a Passport JS strategy
 app.post("/login", (req, res) => {
