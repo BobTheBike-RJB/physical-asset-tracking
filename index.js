@@ -29,21 +29,21 @@ sequelize.authenticate()
         console.error('Unable to connect to the database:', err);
     });
 
-//     //TODO: changing over to use model 'users.js' 
-// const User = sequelize.define('user', {
-//     email: Sequelize.STRING
-// },
-//     {
-//         indexes: [
-//             // Create a unique index on email
-//             {
-//                 unique: true,
-//                 fields: ['email']
-//             }
-//         ]
-//     });
+//TODO: changing over to use model 'users.js' 
+const User = sequelize.define('user', {
+    email: Sequelize.STRING
+},
+    {
+        indexes: [
+            // Create a unique index on email
+            {
+                unique: true,
+                fields: ['email']
+            }
+        ]
+    });
 
-const User = require('./models/users');
+// const User = require('./models/users');
 
 const Note = sequelize.define('note', {
     note: Sequelize.STRING,
@@ -187,10 +187,10 @@ app.get("/dashboard", async (req, res) => {
             }
             res.cookie('session', URL_encoded_encrypted_token, options) // options is optional
 
-            //Get data already stored for this user
+            //Get records already stored for this user
             let user = await getUserByEmail(authorization["full-token"]["email"]);
-            let user_notes = await Note.findAll({where:{userId:user.id, deleted:null}})
-            res.render(path.join(__dirname, 'Pug_Dashboard.pug'), { pageTitle: 'Dashboard', appName: 'Web App Template', items: user_notes })
+            let user_records = await Codes.findAll({ where: { userId: user.id, deleted: null } })
+            res.render(path.join(__dirname, 'Pug_Dashboard.pug'), { pageTitle: 'Dashboard', appName: 'Web App Template', items: user_records })
 
         }
         else {
@@ -354,6 +354,67 @@ app.post("/login", (req, res) => {
     }
 });
 
+//Post: Create new code
+app.post("/api/code", async (req, res) => {
+
+    //Starts the "authorization" workflow
+    secure_page = true;
+    if (req.cookies.session) {
+
+        let encrypted_token = req.cookies.session;
+
+        //Run authorization process
+        var authorization = auth.auth_behavior(process.env.KEY, encrypted_token);
+        auth_status = authorization["authorized"];
+
+        //Conditional responses for token
+        if (auth_status == true) {
+            // If authorized, take to page and issue new session token for cookie
+            console.log(authorization);
+
+            //issue new session token cookie
+            URL_encoded_encrypted_token = auth.issue_token(process.env.KEY, authorization["full-token"]["email"]);
+            // Set cookie
+            let options = {
+                maxAge: session_cookie_max_age * 60 * 1000, // would expire after 15 minutes
+                httpOnly: true // The cookie only accessible by the web server
+            }
+            res.cookie('session', URL_encoded_encrypted_token, options) // options is optional
+
+            //Get data already stored for this user
+            let user = await getUserByEmail(authorization["full-token"]["email"]);
+            Codes.create({ code: "111111" , userId: user.id , deleted: null })
+                .then(function (record) {
+                    console.log({
+                        "Message": "Created record.",
+                        "Record": record
+                    })
+                })
+                .catch(function (err) {
+                    if (err.name == 'SequelizeUniqueConstraintError') {
+                        console.log("Record already exists")
+                    }
+                    else {
+                        console.log(err)
+                    }
+                });
+
+            res.json({ "message": "This will return the 'detailed' view of the newly created code. If you're seeing this, the page view is not yet configured."})
+
+        }
+        else {
+            console.log(authorization["server-message"]);
+            res.redirect('/login');
+        }
+    }
+    //No "session" cookie provided
+    else {
+        console.log("No session cookie provided for accessing secure page.");
+        res.redirect('/login');
+    }
+    //Ends the "authorization" workflow
+});
+
 //Get: all items
 app.get("/items", (req, res) => {
 
@@ -421,30 +482,31 @@ app.post("/api/item", async (req, res) => {
 
 // Delete: Mark database item as "deleted"
 app.delete("/api/item/:id", (req, res) => {
-    
+
     let call_ref = new URL(req.get('referer'))
-    
+
     // TODO: Add authentication (maybe implement as part of Passport.js?)
-    Note.update({deleted: Date()},{where:{ id: req.params.id }})
-        .then( console.log("Marked item as deleted") )
+    Note.update({ deleted: Date() }, { where: { id: req.params.id } })
+        .then(console.log("Marked item as deleted"))
         // TODO: Error handling
-        .then ( 
+        .then(
             res.redirect(call_ref.pathname)
             // res.json({ "message": "This will mark the item/note as deleted, work-in-progress." })
-             )
+        )
 });
 
 // Update: Update database item
 app.put("/api/item/:id", (req, res) => {
-    
+
     // TODO: Add authentication (maybe implement as part of Passport.js?)
-    Note.update({note: req.body['text']},{where:{ id: req.params.id }})
-        .then( console.log("Updated item") )
+    Note.update({ note: req.body['text'] }, { where: { id: req.params.id } })
+        .then(console.log("Updated item"))
         // TODO: Error handling
-        .then ( res.json({ "message": "Item has been updated." }) )
+        .then(res.json({ "message": "Item has been updated." }))
 });
 
 app.use("/api", (req, res) => {
+    console.log("/api path has been called using method:" + req.method)
     res.json({ "message": "This will return API responses, not yet configured." })
 });
 

@@ -21,11 +21,11 @@ html(lang="en")
             //- -var items= items
             ul
             each item in items
-                li= item.note
+                li= item.code
                     Button(class='btn btn-secondary' onClick=`openEditForm()` disabled) Edit 
                         i(class="bi bi-pencil")
                     Button(class='btn btn-danger active' onClick=`sendDelete('item',${item.id})` ) Delete 
                         i(class="bi bi-trash3")
             else
                 li You do not have any assets entered. 
-                Button(class='btn btn-primary active' onClick=`` ) Create your first asset & QR code here!
+                Button(class='btn btn-primary active' id='gencode' onClick=`buttonclick()` ) Create your first asset & QR code here!
