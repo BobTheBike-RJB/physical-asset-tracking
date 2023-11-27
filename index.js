@@ -79,7 +79,6 @@ sequelize.sync()
 // const db = require('./db.js');
 // db.sequelize.sync()
 
-
 /**
 * Retrieves a user based on email
 */
@@ -104,6 +103,12 @@ const favicon = require('serve-favicon');
 // // TODO: change in production
 // var cors = require('cors')
 // app.use(cors())
+
+
+// Module/routing for '/code' links
+const codes = require('./routes/code')
+app.use('/code', codes)
+
 
 const port = 3000;
 
@@ -510,7 +515,6 @@ app.use("/api", (req, res) => {
     res.json({ "message": "This will return API responses, not yet configured." })
 });
 
-//Get: Login page
 app.get("/button", (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'Click and Wait for Server Button.html'));
 });
